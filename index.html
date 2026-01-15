@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Colonia 55 - Interactivo</title>
+
+    <link rel="icon" type="image/png" href="./favicon.png?v=1">
+    <link rel="shortcut icon" type="image/png" href="./favicon.png?v=1">
+    <link rel="apple-touch-icon" href="./favicon.png?v=1">
+
+    <style>
+        :root { 
+            --cafe: #6B5E4C; 
+            --dorado: #C5A059; 
+            --whatsapp: #25D366;
+            --bg-light: #FFFDF5;
+        }
+        
+        body { 
+            margin: 0; padding: 0; 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg-light); 
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Pantalla de Introducción */
+        #pantalla-introduccion {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-light); z-index: 9999; display: flex; 
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+        }
+        
+        #pantalla-introduccion h1 {
+            color: var(--cafe); letter-spacing: 5px; font-weight: 300; 
+            margin-bottom: 30px; font-size: 1.8rem;
+        }
+
+        #pantalla-introduccion img { 
+            max-width: 85%; max-height: 55%; 
+            border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid var(--dorado); margin-bottom: 30px;
+        }
+
+        /* Contenedor del Plano */
+        #interactive-container {
+            position: relative; 
+            width: 90vw; max-width: 360px; 
+            aspect-ratio: 3/4;
+            display: none; 
+            margin-top: 60px; /* Espacio superior para el título */
+            background-image: url('plano.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 1000;
+        }
+
+        .punto-interes {
+            position: absolute; width: 44px; height: 44px;
+            background: url('punto_interes.webp') no-repeat center;
+            background-size: contain; cursor: pointer;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        #btn-informes {
+            position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+            width: 240px; height: 60px;
+            background: url('informes.webp') no-repeat center;
+            background-size: contain; cursor: pointer;
+        }
+
+        /* Visor de Fotos */
+        #visor {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.96); display: none; z-index: 6000;
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+        #visor img { max-width: 90%; max-height: 75%; border: 2px solid var(--dorado); border-radius: 10px; }
+        #close-visor { position: absolute; top: 30px; right: 30px; color: white; font-size: 45px; cursor: pointer; }
+
+        /* Formulario y Modales (Estilo anterior) */
+        #form-container, .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 7000;
+            display: none; justify-content: center; align-items: center;
+        }
+
+        .form-box {
+            width: 88%; max-width: 340px; background: white; padding: 35px 25px;
+            border-radius: 20px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        input { 
+            width: 100%; margin: 12px 0; padding: 16px; border-radius: 12px; 
+            border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; 
+        }
+        
+        .btn-action { 
+            background: var(--cafe); color: white; border: none; padding: 18px; 
+            border-radius: 50px; font-weight: 800; width: 100%; cursor: pointer; 
+            margin-top: 15px; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .privacy-row { 
+            font-size: 12px; color: #666; margin: 15px 0; 
+            display: flex; align-items: flex-start; gap: 10px; text-align: left; 
+        }
+
+        .modal-content { background: white; color: #333; padding: 25px; border-radius: 20px; width: 80%; max-width: 350px; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <div id="pantalla-introduccion">
+        <h1>COLONIA 55</h1>
+        <img src="imagen1.webp" alt="Proyecto">
+        <button class="btn-action" style="width: auto; padding: 18px 45px;" onclick="mostrarPlano()">EXPLORAR PLANO</button>
+    </div>
+
+    <h2 id="titulo-plano" style="display:none; color: var(--cafe); margin-top: 40px; letter-spacing: 3px; font-weight: 300;">PLANTA INTERACTIVA</h2>
+
+    <div id="interactive-container">
+        <div class="punto-interes" style="top: 15%; left: 40%;" onclick="verFoto('salacomedor.webp')"></div>
+        <div class="punto-interes" style="top: 45%; left: 20%;" onclick="verFoto('cocina.webp')"></div>
+        <div class="punto-interes" style="top: 35%; left: 65%;" onclick="verFoto('recamara1.webp')"></div>
+        <div class="punto-interes" style="top: 70%; left: 65%;" onclick="verFoto('recamara2.webp')"></div>
+        <div class="punto-interes" style="top: 80%; left: 35%;" onclick="verFoto('banio.webp')"></div>
+        <div id="btn-informes" onclick="toggleForm(true)"></div>
+    </div>
+
+    <div id="visor">
+        <span id="close-visor" onclick="cerrarFoto()">&times;</span>
+        <img id="img-full" src="">
+        <p style="color: white; margin-top: 20px; font-size: 12px; opacity: 0.8; letter-spacing: 2px;">COLONIA 55</p>
+    </div>
+
+    <div id="form-container">
+        <div class="form-box">
+            <h3 style="color: var(--cafe); margin-top: 0; letter-spacing: 1px;">SOLICITAR BROCHURE</h3>
+            <p style="font-size: 14px; color: #777; margin-bottom: 20px;">Ingresa tus datos para recibir la información completa.</p>
+            <input type="text" id="lead-nombre" placeholder="Nombre completo">
+            <input type="tel" id="lead-whatsapp" placeholder="WhatsApp (10 dígitos)">
+            
+            <div class="privacy-row">
+                <input type="checkbox" id="legal-check" style="width: 20px; height: 20px; flex-shrink: 0;">
+                <label for="legal-check">Acepto el <a href="javascript:void(0)" onclick="toggleModal(true)" style="color: var(--dorado); font-weight: bold;">aviso de privacidad</a>.</label>
+            </div>
+            
+            <button class="btn-action" onclick="enviarLeadWhatsApp()">RECLAMAR INFORMACIÓN</button>
+            <p onclick="toggleForm(false)" style="color: #999; cursor: pointer; margin-top: 20px; font-size: 13px; text-decoration: underline;">Volver al plano</p>
+        </div>
+    </div>
+
+    <div id="modal-priv" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-top:0; color: var(--cafe)">Aviso de Privacidad</h3>
+            <p style="font-size: 14px; line-height: 1.6; color: #555;">
+                Sus datos personales serán utilizados exclusivamente para la gestión y entrega de información solicitada del proyecto inmobiliario a través de WhatsApp. No almacenamos su información en servidores externos ni la compartimos con terceros.
+            </p>
+            <button class="btn-action" onclick="toggleModal(false)">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <script>
+        function mostrarPlano() {
+            document.getElementById('pantalla-introduccion').style.display = 'none';
+            document.getElementById('interactive-container').style.display = 'block';
+            document.getElementById('titulo-plano').style.display = 'block';
+        }
+
+        function verFoto(src) {
+            document.getElementById('img-full').src = src;
+            document.getElementById('visor').style.display = 'flex';
+        }
+
+        function cerrarFoto() {
+            document.getElementById('visor').style.display = 'none';
+        }
+
+        function toggleForm(show) {
+            document.getElementById('form-container').style.display = show ? 'flex' : 'none';
+        }
+
+        function toggleModal(show) {
+            document.getElementById('modal-priv').style.display = show ? 'flex' : 'none';
+        }
+
+        function enviarLeadWhatsApp() {
+            const nombre = document.getElementById('lead-nombre').value;
+            const telefono = document.getElementById('lead-whatsapp').value;
+            const check = document.getElementById('legal-check').checked;
+
+            if (!nombre || telefono.length < 10) { alert("Por favor, completa tus datos correctamente."); return; }
+            if (!check) { alert("Debes aceptar el aviso de privacidad."); return; }
+
+            const mensaje = encodeURIComponent(`*INTERÉS - COLONIA 55*\n\n👤 *Nombre:* ${nombre}\n📱 *WhatsApp:* ${telefono}\n\nSolicito el brochure digital y disponibilidad.`);
+            window.location.href = `https://wa.me/5215542492026?text=${mensaje}`;
+        }
+    </script>
+</body>
+</html>
